@@ -1,0 +1,33 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        config:
+          - os: ubuntu-latest
+            framework: net6.0
+          - os: windows-latest
+            framework: net6.0
+          - os: windows-latest
+            framework: net462
+    runs-on: ${{ matrix.config.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      if: ${{ matrix.config.os == 'ubuntu-latest' }}
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore ./qoi.csharp.tests/
+    - name: Build
+      run: dotnet build --no-restore --framework ${{ matrix.config.framework }} ./qoi.csharp.tests/
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --framework ${{ matrix.config.framework }} ./qoi.csharp.tests/
