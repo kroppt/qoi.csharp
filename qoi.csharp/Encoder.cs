@@ -18,6 +18,15 @@ namespace Qoi.Csharp
                     WriteBigEndian(binWriter, height);
                     binWriter.Write((byte)channels);
                     binWriter.Write((byte)colorSpace);
+
+                    binWriter.Write((byte)0);
+                    binWriter.Write((byte)0);
+                    binWriter.Write((byte)0);
+                    binWriter.Write((byte)0);
+                    binWriter.Write((byte)0);
+                    binWriter.Write((byte)0);
+                    binWriter.Write((byte)0);
+                    binWriter.Write((byte)1);
                 }
                 return memStream.ToArray();
             }
