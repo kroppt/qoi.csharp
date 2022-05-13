@@ -105,9 +105,14 @@ namespace Qoi.Csharp
                 else if (prev.A == next.A)
                 {
                     var diff = new Diff(prev, next);
+                    var lumaDiff = new LumaDiff(prev, next);
                     if (diff.IsSmall())
                     {
                         WriteDiffChunk(diff);
+                    }
+                    else if (lumaDiff.IsSmall())
+                    {
+                        WriteLumaChunk(lumaDiff);
                     }
                     else
                     {
@@ -153,6 +158,17 @@ namespace Qoi.Csharp
             chunk |= (byte)(diff.G << 2);
             chunk |= (byte)(diff.B << 0);
             _binWriter.Write(chunk);
+        }
+
+        private void WriteLumaChunk(LumaDiff lumaDiff)
+        {
+            byte byte1 = 0b_10_000000;
+            byte1 |= lumaDiff.G;
+            byte byte2 = 0;
+            byte2 |= (byte)(lumaDiff.RG << 4);
+            byte2 |= (byte)(lumaDiff.BG << 0);
+            _binWriter.Write(byte1);
+            _binWriter.Write(byte2);
         }
 
         private int CalculateIndex(Pixel pixel)

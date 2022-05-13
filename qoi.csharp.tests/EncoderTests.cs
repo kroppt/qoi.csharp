@@ -113,7 +113,6 @@ namespace Qoi.Csharp.Tests
         public void ShouldHaveDiffChunk()
         {
             byte expected = 0b_01_11_10_10;
-
             var input = new byte[] {
                 128, 0, 0, 255, // RGB chunk
                 129, 0, 0, 255, // diff chunk
@@ -128,7 +127,6 @@ namespace Qoi.Csharp.Tests
         private void ShouldHaveDiffChunkWithWraparound()
         {
             byte expected = 0b_01_10_11_01;
-
             var input = new byte[] {
                 128, 255, 0, 255, // RGB chunk
                 128, 0, 255, 255, // diff chunk
@@ -137,6 +135,21 @@ namespace Qoi.Csharp.Tests
             var bytes = Encoder.Encode(input, 2, 1, Channels.Rgba, ColorSpace.SRgb);
 
             var actual = bytes[18];
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        private void ShouldHaveLumaChunk()
+        {
+            var expected = new byte[] { 0b_10_111111, 0b_0000_1111 };
+            var input = new byte[] {
+                128, 0, 0, 255,
+                151, 31, 38, 255,
+            };
+
+            var bytes = Encoder.Encode(input, 2, 1, Channels.Rgba, ColorSpace.SRgb);
+
+            var actual = new ArraySegment<byte>(bytes, 18, 2);
             Assert.Equal(expected, actual);
         }
 
