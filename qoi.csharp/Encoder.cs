@@ -11,6 +11,9 @@ namespace Qoi.Csharp
         private readonly int _height;
         private readonly Channels _channels;
         private readonly ColorSpace _colorSpace;
+        private readonly Pixel[] _cache;
+
+        private const int CACHE_SIZE = 64;
 
         private Encoder(BinaryWriter binWriter, byte[] input, int width, int height, Channels channels, ColorSpace colorSpace)
         {
@@ -20,6 +23,7 @@ namespace Qoi.Csharp
             _height = height;
             _channels = channels;
             _colorSpace = colorSpace;
+            _cache = new Pixel[CACHE_SIZE];
         }
 
         public static byte[] Encode(byte[] input, int width, int height, Channels channels, ColorSpace colorSpace)
@@ -74,16 +78,6 @@ namespace Qoi.Csharp
             _binWriter.Write((byte)1);
         }
 
-        private struct Pixel
-        {
-            public Pixel(byte r, byte g, byte b, byte a) { R = r; G = g; B = b; A = a; }
-
-            public byte R;
-            public byte G;
-            public byte B;
-            public byte A;
-        }
-
         private void WriteChunks()
         {
             int pixelSize;
@@ -99,17 +93,24 @@ namespace Qoi.Csharp
                     throw new ArgumentOutOfRangeException();
             }
             var prev = new Pixel(0, 0, 0, 255);
-            for (int i = 0; i < _input.Length / pixelSize; i += pixelSize)
+            for (int i = 0; i < _input.Length; i += pixelSize)
             {
                 var alpha = _channels == Channels.Rgba ? _input[i + 3] : (byte)255;
                 var next = new Pixel(_input[i], _input[i + 1], _input[i + 2], alpha);
-                if (prev.A == next.A)
+                var index = CalculateIndex(next);
+                if (_cache[index].Equals(next))
+                {
+                    WriteIndexChunk(index);
+                }
+                else if (prev.A == next.A)
                 {
                     WriteRgbChunk(next);
+                    _cache[index] = next;
                 }
                 else
                 {
                     WriteRgbaChunk(next);
+                    _cache[index] = next;
                 }
                 prev = next;
             }
@@ -130,6 +131,16 @@ namespace Qoi.Csharp
             _binWriter.Write(pixel.G);
             _binWriter.Write(pixel.B);
             _binWriter.Write(pixel.A);
+        }
+
+        private void WriteIndexChunk(int index)
+        {
+            _binWriter.Write((byte)index);
+        }
+
+        private int CalculateIndex(Pixel pixel)
+        {
+            return (pixel.R * 3 + pixel.G * 5 + pixel.B * 7 + pixel.A * 11) % CACHE_SIZE;
         }
     }
 }

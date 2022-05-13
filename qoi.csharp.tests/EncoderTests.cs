@@ -92,6 +92,23 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void ShouldHaveIndexChunk()
+        {
+            byte expected = 53;
+            var input = new byte[] {
+                128, 0, 0, 255, // RGB chunk
+                0, 127, 0, 255, // RGB chunk
+                128, 0, 0, 255, // index chunk
+                0, 127, 0, 255, // index chunk
+            };
+
+            var bytes = Encoder.Encode(input, 2, 2, Channels.Rgba, ColorSpace.SRgb);
+
+            var actual = bytes[22];
+            Assert.Equal(expected, actual);
+        }
+
         private static void WriteBigEndian(BinaryWriter binWriter, int value)
         {
             binWriter.Write((byte)((value >> 030) & 0xFF));
