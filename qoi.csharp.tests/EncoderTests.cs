@@ -125,6 +125,21 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
+        private void ShouldHaveDiffChunkWithWraparound()
+        {
+            byte expected = 0b_01_10_11_01;
+
+            var input = new byte[] {
+                128, 255, 0, 255, // RGB chunk
+                128, 0, 255, 255, // diff chunk
+            };
+
+            var bytes = Encoder.Encode(input, 2, 1, Channels.Rgba, ColorSpace.SRgb);
+
+            var actual = bytes[18];
+            Assert.Equal(expected, actual);
+        }
+
         private static void WriteBigEndian(BinaryWriter binWriter, int value)
         {
             binWriter.Write((byte)((value >> 24) & 0xFF));
