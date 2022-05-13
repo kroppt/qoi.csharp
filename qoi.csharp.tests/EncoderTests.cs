@@ -109,12 +109,28 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void ShouldHaveDiffChunk()
+        {
+            byte expected = 0b_01_11_10_10;
+
+            var input = new byte[] {
+                128, 0, 0, 255, // RGB chunk
+                129, 0, 0, 255, // diff chunk
+            };
+
+            var bytes = Encoder.Encode(input, 2, 1, Channels.Rgba, ColorSpace.SRgb);
+
+            var actual = bytes[18];
+            Assert.Equal(expected, actual);
+        }
+
         private static void WriteBigEndian(BinaryWriter binWriter, int value)
         {
-            binWriter.Write((byte)((value >> 030) & 0xFF));
-            binWriter.Write((byte)((value >> 020) & 0xFF));
-            binWriter.Write((byte)((value >> 010) & 0xFF));
-            binWriter.Write((byte)((value >> 000) & 0xFF));
+            binWriter.Write((byte)((value >> 24) & 0xFF));
+            binWriter.Write((byte)((value >> 16) & 0xFF));
+            binWriter.Write((byte)((value >> 08) & 0xFF));
+            binWriter.Write((byte)((value >> 00) & 0xFF));
         }
     }
 }

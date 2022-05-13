@@ -48,10 +48,10 @@ namespace Qoi.Csharp
 
         private void WriteBigEndian(int value)
         {
-            _binWriter.Write((byte)((value >> 030) & 0xFF));
-            _binWriter.Write((byte)((value >> 020) & 0xFF));
-            _binWriter.Write((byte)((value >> 010) & 0xFF));
-            _binWriter.Write((byte)((value >> 000) & 0xFF));
+            _binWriter.Write((byte)((value >> 24) & 0xFF));
+            _binWriter.Write((byte)((value >> 16) & 0xFF));
+            _binWriter.Write((byte)((value >> 08) & 0xFF));
+            _binWriter.Write((byte)((value >> 00) & 0xFF));
         }
 
         private void WriteHeader()
@@ -104,7 +104,15 @@ namespace Qoi.Csharp
                 }
                 else if (prev.A == next.A)
                 {
-                    WriteRgbChunk(next);
+                    var diff = new Diff(prev, next);
+                    if (diff.IsSmall())
+                    {
+                        WriteDiffChunk(diff);
+                    }
+                    else
+                    {
+                        WriteRgbChunk(next);
+                    }
                     _cache[index] = next;
                 }
                 else
@@ -136,6 +144,15 @@ namespace Qoi.Csharp
         private void WriteIndexChunk(int index)
         {
             _binWriter.Write((byte)index);
+        }
+
+        private void WriteDiffChunk(Diff diff)
+        {
+            byte chunk = 0b_01_00_00_00;
+            chunk |= (byte)(diff.R << 4);
+            chunk |= (byte)(diff.G << 2);
+            chunk |= (byte)(diff.B << 0);
+            _binWriter.Write(chunk);
         }
 
         private int CalculateIndex(Pixel pixel)
