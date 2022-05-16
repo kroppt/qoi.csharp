@@ -124,7 +124,7 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
-        private void ShouldHaveDiffChunkWithWraparound()
+        public void ShouldHaveDiffChunkWithWraparound()
         {
             byte expected = 0b_01_10_11_01;
             var input = new byte[] {
@@ -139,7 +139,7 @@ namespace Qoi.Csharp.Tests
         }
 
         [Fact]
-        private void ShouldHaveLumaChunk()
+        public void ShouldHaveLumaChunk()
         {
             var expected = new byte[] { 0b_10_111111, 0b_0000_1111 };
             var input = new byte[] {
@@ -154,7 +154,7 @@ namespace Qoi.Csharp.Tests
         }
 
         [Fact]
-        private void ShouldHaveLumaChunkWraparound()
+        public void ShouldHaveLumaChunkWraparound()
         {
             var expected = new byte[] { 0b_10_100010, 0b_0110_0101 };
             var input = new byte[] {
