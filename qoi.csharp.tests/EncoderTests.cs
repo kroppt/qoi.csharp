@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
 using Xunit;
 
 namespace Qoi.Csharp.Tests
@@ -243,6 +246,26 @@ namespace Qoi.Csharp.Tests
             var bytes = Encoder.Encode(input, 2, 1, Channels.Rgba, ColorSpace.SRgb);
 
             var actual = bytes[bytes.Length - 9];
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ShouldEncode10x10Correctly()
+        {
+            var expected = File.ReadAllBytes("testdata/10x10.qoi");
+            byte[] input;
+            int width;
+            int height;
+            using (Image<Rgb24> png = Image.Load<Rgb24>("testdata/10x10.png"))
+            {
+                width = png.Width;
+                height = png.Height;
+                input = new byte[width * height * 3];
+                png.CopyPixelDataTo(input);
+            }
+
+            var actual = Encoder.Encode(input, width, height, Channels.Rgb, ColorSpace.SRgb);
+
             Assert.Equal(expected, actual);
         }
 
