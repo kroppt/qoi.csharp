@@ -153,6 +153,21 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        private void ShouldHaveLumaChunkWraparound()
+        {
+            var expected = new byte[] { 0b_10_100010, 0b_0110_0101 };
+            var input = new byte[] {
+                128, 255, 0, 255,
+                128, 1, 255, 255,
+            };
+
+            var bytes = Encoder.Encode(input, 2, 1, Channels.Rgba, ColorSpace.SRgb);
+
+            var actual = new ArraySegment<byte>(bytes, 18, 2);
+            Assert.Equal(expected, actual);
+        }
+
         private static void WriteBigEndian(BinaryWriter binWriter, int value)
         {
             binWriter.Write((byte)((value >> 24) & 0xFF));
