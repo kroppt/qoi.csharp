@@ -124,6 +124,7 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
         public void ShouldHaveDiffChunkWithWraparound()
         {
             byte expected = 0b_01_10_11_01;
