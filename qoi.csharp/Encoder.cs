@@ -12,6 +12,8 @@ namespace Qoi.Csharp
         private readonly Channels _channels;
         private readonly ColorSpace _colorSpace;
         private readonly Pixel[] _cache;
+        private Pixel _prev;
+        private byte _runLength;
 
         private const int CACHE_SIZE = 64;
 
@@ -24,6 +26,8 @@ namespace Qoi.Csharp
             _channels = channels;
             _colorSpace = colorSpace;
             _cache = new Pixel[CACHE_SIZE];
+            _prev = new Pixel(0, 0, 0, 255);
+            _runLength = 0;
         }
 
         public static byte[] Encode(byte[] input, int width, int height, Channels channels, ColorSpace colorSpace)
@@ -92,41 +96,57 @@ namespace Qoi.Csharp
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            var prev = new Pixel(0, 0, 0, 255);
             for (int i = 0; i < _input.Length; i += pixelSize)
             {
                 var alpha = _channels == Channels.Rgba ? _input[i + 3] : (byte)255;
                 var next = new Pixel(_input[i], _input[i + 1], _input[i + 2], alpha);
-                var index = CalculateIndex(next);
-                if (_cache[index].Equals(next))
+                WriteChunk(next);
+            }
+        }
+
+        private void WriteChunk(Pixel next)
+        {
+            var index = CalculateIndex(next);
+            if (_prev.Equals(next))
+            {
+                _runLength++;
+                _cache[index] = next;
+            }
+            else if (_runLength > 0)
+            {
+                WriteRunChunk();
+                _runLength = 0;
+                WriteChunk(next);
+                return;
+            }
+            else if (_cache[index].Equals(next))
+            {
+                WriteIndexChunk(index);
+            }
+            else if (_prev.A == next.A)
+            {
+                var diff = new Diff(_prev, next);
+                var lumaDiff = new LumaDiff(_prev, next);
+                if (diff.IsSmall())
                 {
-                    WriteIndexChunk(index);
+                    WriteDiffChunk(diff);
                 }
-                else if (prev.A == next.A)
+                else if (lumaDiff.IsSmall())
                 {
-                    var diff = new Diff(prev, next);
-                    var lumaDiff = new LumaDiff(prev, next);
-                    if (diff.IsSmall())
-                    {
-                        WriteDiffChunk(diff);
-                    }
-                    else if (lumaDiff.IsSmall())
-                    {
-                        WriteLumaChunk(lumaDiff);
-                    }
-                    else
-                    {
-                        WriteRgbChunk(next);
-                    }
-                    _cache[index] = next;
+                    WriteLumaChunk(lumaDiff);
                 }
                 else
                 {
-                    WriteRgbaChunk(next);
-                    _cache[index] = next;
+                    WriteRgbChunk(next);
                 }
-                prev = next;
+                _cache[index] = next;
             }
+            else
+            {
+                WriteRgbaChunk(next);
+                _cache[index] = next;
+            }
+            _prev = next;
         }
 
         private void WriteRgbChunk(Pixel pixel)
@@ -169,6 +189,13 @@ namespace Qoi.Csharp
             byte2 |= (byte)(lumaDiff.BG << 0);
             _binWriter.Write(byte1);
             _binWriter.Write(byte2);
+        }
+
+        private void WriteRunChunk()
+        {
+            byte chunk = 0b_11_000000;
+            chunk |= (byte)(_runLength - 1);
+            _binWriter.Write(chunk);
         }
 
         private int CalculateIndex(Pixel pixel)
