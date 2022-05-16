@@ -103,6 +103,10 @@ namespace Qoi.Csharp
                 var next = new Pixel(_input[i], _input[i + 1], _input[i + 2], alpha);
                 WriteChunk(next);
             }
+            if (_runLength != 0)
+            {
+                WriteRunChunk();
+            }
         }
 
         private void WriteChunk(Pixel next)

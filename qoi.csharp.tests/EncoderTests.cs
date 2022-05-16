@@ -231,6 +231,21 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void ShouldHaveRunChunkBeforeEndMarker()
+        {
+            byte expected = 0b_11_000000;
+            var input = new byte[] {
+                128, 0, 0, 255,
+                128, 0, 0, 255,
+            };
+
+            var bytes = Encoder.Encode(input, 2, 1, Channels.Rgba, ColorSpace.SRgb);
+
+            var actual = bytes[bytes.Length - 9];
+            Assert.Equal(expected, actual);
+        }
+
         private static void WriteBigEndian(BinaryWriter binWriter, int value)
         {
             binWriter.Write((byte)((value >> 24) & 0xFF));
