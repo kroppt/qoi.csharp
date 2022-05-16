@@ -16,6 +16,7 @@ namespace Qoi.Csharp
         private byte _runLength;
 
         private const int CACHE_SIZE = 64;
+        private const int MAX_RUN_LENGTH = 62;
 
         private Encoder(BinaryWriter binWriter, byte[] input, int width, int height, Channels channels, ColorSpace colorSpace)
         {
@@ -107,7 +108,7 @@ namespace Qoi.Csharp
         private void WriteChunk(Pixel next)
         {
             var index = CalculateIndex(next);
-            if (_prev.Equals(next))
+            if (_prev.Equals(next) && _runLength < MAX_RUN_LENGTH)
             {
                 _runLength++;
                 _cache[index] = next;

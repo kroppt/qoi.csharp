@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using Xunit;
@@ -184,6 +185,28 @@ namespace Qoi.Csharp.Tests
             var bytes = Encoder.Encode(input, 5, 1, Channels.Rgba, ColorSpace.SRgb);
 
             var actual = bytes[18];
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ShouldHaveMaxLengthRunChunk()
+        {
+            var expected = new byte[] {
+                0b11111110, 128, 0, 0, // RGB
+                0b_11_111101, // run 62
+                0b_11_000000, // run 1
+            };
+
+            var input = new List<byte>();
+            for (int i = 0; i < 64; i++)
+            {
+                input.AddRange(new byte[] { 128, 0, 0, 255 });
+            }
+            input.AddRange(new byte[] { 0, 0, 0, 0 });
+
+            var bytes = Encoder.Encode(input.ToArray(), 13, 5, Channels.Rgba, ColorSpace.SRgb);
+
+            var actual = new ArraySegment<byte>(bytes, 14, 6);
             Assert.Equal(expected, actual);
         }
 
