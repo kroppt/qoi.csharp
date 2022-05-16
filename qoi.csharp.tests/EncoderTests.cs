@@ -269,6 +269,26 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void ShouldEncodeSampleCorrectly()
+        {
+            var expected = File.ReadAllBytes("testdata/sample.qoi");
+            byte[] input;
+            int width;
+            int height;
+            using (Image<Rgba32> png = Image.Load<Rgba32>("testdata/sample.png"))
+            {
+                width = png.Width;
+                height = png.Height;
+                input = new byte[width * height * 4];
+                png.CopyPixelDataTo(input);
+            }
+
+            var actual = Encoder.Encode(input, width, height, Channels.Rgba, ColorSpace.SRgb);
+
+            Assert.Equal(expected, actual);
+        }
+
         private static void WriteBigEndian(BinaryWriter binWriter, int value)
         {
             binWriter.Write((byte)((value >> 24) & 0xFF));
