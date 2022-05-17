@@ -256,7 +256,7 @@ namespace Qoi.Csharp.Tests
             byte[] input;
             int width;
             int height;
-            using (Image<Rgb24> png = Image.Load<Rgb24>("testdata/10x10.png"))
+            using (Image<Rgb24> png = SixLabors.ImageSharp.Image.Load<Rgb24>("testdata/10x10.png"))
             {
                 width = png.Width;
                 height = png.Height;
@@ -276,7 +276,7 @@ namespace Qoi.Csharp.Tests
             byte[] input;
             int width;
             int height;
-            using (Image<Rgba32> png = Image.Load<Rgba32>("testdata/sample.png"))
+            using (Image<Rgba32> png = SixLabors.ImageSharp.Image.Load<Rgba32>("testdata/sample.png"))
             {
                 width = png.Width;
                 height = png.Height;
