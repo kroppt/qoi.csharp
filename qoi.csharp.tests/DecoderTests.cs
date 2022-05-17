@@ -14,5 +14,19 @@ namespace Qoi.Csharp.Tests
 
             Decoder.Decode(input);
         }
+
+        [Fact]
+        public void ShouldFailParsingBadMagicBytes()
+        {
+            var input = new byte[] {
+                (byte)'a', (byte)'b', (byte)'c', (byte)'d', 0, 0, 0, 0, 0, 0, 0, 0, 3, 0,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            Assert.Throws<Decoder.BadMagicBytesException>(() =>
+            {
+                Decoder.Decode(input);
+            });
+        }
     }
 }
