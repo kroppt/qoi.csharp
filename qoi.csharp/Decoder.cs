@@ -61,6 +61,25 @@ namespace Qoi.Csharp
             }
         }
 
+        private void ParseEndMarker()
+        {
+            var correctEndMarker = new byte[] {
+                (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)1,
+            };
+            var actualEndMarker = _binReader.ReadBytes(8);
+            if (actualEndMarker.Length < correctEndMarker.Length)
+            {
+                throw new InvalidHeaderException("End marker is invalid.");
+            }
+            for (int i = 0; i < actualEndMarker.Length; i++)
+            {
+                if (actualEndMarker[i] != correctEndMarker[i])
+                {
+                    throw new InvalidHeaderException("End marker is invalid.");
+                }
+            }
+        }
+
         private uint ReadUInt32BigEndian()
         {
             var value = 0u;
@@ -78,6 +97,7 @@ namespace Qoi.Csharp
             var height = ReadUInt32BigEndian();
             ParseChannels();
             ParseColorSpace();
+            ParseEndMarker();
             return new Image(new byte[] { }, width, height, Channels.Rgba, ColorSpace.SRgb);
         }
 
