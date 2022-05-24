@@ -23,7 +23,7 @@ namespace Qoi.Csharp.Tests
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
-            Assert.Throws<Decoder.BadMagicBytesException>(() =>
+            Assert.Throws<Decoder.InvalidHeaderException>(() =>
             {
                 Decoder.Decode(input);
             });
@@ -47,6 +47,38 @@ namespace Qoi.Csharp.Tests
 
             Assert.Equal(expectedWidth, actual.Width);
             Assert.Equal(expectedHeight, actual.Height);
+        }
+
+        [Fact]
+        public void ShouldFailParsingBadChannels()
+        {
+            var width = 0;
+            var height = 0;
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 9, 0,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            Assert.Throws<Decoder.InvalidHeaderException>(() =>
+            {
+                Decoder.Decode(input);
+            });
+        }
+
+        [Fact]
+        public void ShouldFailParsingBadColorSpace()
+        {
+            var width = 0;
+            var height = 0;
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 3, 2,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            Assert.Throws<Decoder.InvalidHeaderException>(() =>
+            {
+                Decoder.Decode(input);
+            });
         }
     }
 }

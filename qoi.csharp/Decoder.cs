@@ -29,22 +29,35 @@ namespace Qoi.Csharp
             var correctMagic = new byte[] {
                 (byte)'q', (byte)'o', (byte)'i', (byte)'f',
             };
-            var actualMagic = new byte[] {
-                _binReader.ReadByte(),
-                _binReader.ReadByte(),
-                _binReader.ReadByte(),
-                _binReader.ReadByte(),
-            };
+            var actualMagic = _binReader.ReadBytes(4);
             if (actualMagic.Length < correctMagic.Length)
             {
-                throw new BadMagicBytesException();
+                throw new InvalidHeaderException("Magic bytes were invalid.");
             }
             for (int i = 0; i < actualMagic.Length; i++)
             {
                 if (actualMagic[i] != correctMagic[i])
                 {
-                    throw new BadMagicBytesException();
+                    throw new InvalidHeaderException("Magic bytes were invalid.");
                 }
+            }
+        }
+
+        private void ParseChannels()
+        {
+            var channels = (Channels)_binReader.ReadByte();
+            if (!Enum.IsDefined(typeof(Channels), channels))
+            {
+                throw new InvalidHeaderException($"Value {channels} for Channels is not valid.");
+            }
+        }
+
+        private void ParseColorSpace()
+        {
+            var colorSpace = (ColorSpace)_binReader.ReadByte();
+            if (!Enum.IsDefined(typeof(ColorSpace), colorSpace))
+            {
+                throw new InvalidHeaderException($"Value {colorSpace} for ColorSpace is not valid.");
             }
         }
 
@@ -63,20 +76,22 @@ namespace Qoi.Csharp
             ParseMagic();
             var width = ReadUInt32BigEndian();
             var height = ReadUInt32BigEndian();
+            ParseChannels();
+            ParseColorSpace();
             return new Image(new byte[] { }, width, height, Channels.Rgba, ColorSpace.SRgb);
         }
 
-        public class BadMagicBytesException : Exception
+        public class InvalidHeaderException : Exception
         {
-            public BadMagicBytesException() : base()
+            public InvalidHeaderException() : base()
             {
             }
 
-            public BadMagicBytesException(string message) : base(message)
+            public InvalidHeaderException(string message) : base(message)
             {
             }
 
-            public BadMagicBytesException(string message, Exception innerException) : base(message, innerException)
+            public InvalidHeaderException(string message, Exception innerException) : base(message, innerException)
             {
             }
         }
