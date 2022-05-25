@@ -8,7 +8,7 @@ namespace Qoi.Csharp.Tests
         public void ShouldSucceed()
         {
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, 0, 0, 0, 0, 0, 3, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, 0, 0, 0, 0, 0, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
@@ -19,7 +19,7 @@ namespace Qoi.Csharp.Tests
         public void ShouldFailParsingBadMagicBytes()
         {
             var input = new byte[] {
-                (byte)'a', (byte)'b', (byte)'c', (byte)'d', 0, 0, 0, 0, 0, 0, 0, 0, 3, 0,
+                (byte)'a', (byte)'b', (byte)'c', (byte)'d', 0, 0, 0, 0, 0, 0, 0, 0, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
@@ -35,7 +35,7 @@ namespace Qoi.Csharp.Tests
             var expectedWidth = 0u;
             var expectedHeight = 0u;
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)expectedWidth, 0, 0, 0, (byte)expectedHeight, 3, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)expectedWidth, 0, 0, 0, (byte)expectedHeight, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
@@ -51,7 +51,7 @@ namespace Qoi.Csharp.Tests
             var width = 0;
             var height = 0;
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 9, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 9, (byte)ColorSpace.SRgb,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
@@ -67,7 +67,7 @@ namespace Qoi.Csharp.Tests
             var width = 0;
             var height = 0;
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 3, 2,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgb, 2,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
@@ -83,7 +83,7 @@ namespace Qoi.Csharp.Tests
             var width = 0;
             var height = 0;
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 3, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
             };
 
             Assert.Throws<Decoder.InvalidHeaderException>(() =>
@@ -98,7 +98,7 @@ namespace Qoi.Csharp.Tests
             var width = 0;
             var height = 0;
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 3, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
                 0, 0, 0, 0, 0,
             };
 
@@ -114,7 +114,7 @@ namespace Qoi.Csharp.Tests
             var width = 0;
             var height = 0;
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, 3, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
                 0, 0, 0, 0, 0, 1, 1, 1,
             };
 
@@ -132,7 +132,7 @@ namespace Qoi.Csharp.Tests
                 128, 0, 0, 255,
             };
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, size, 0, 0, 0, size, 3, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, size, 0, 0, 0, size, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
                 0b11111110,
                 128,
                 0,
@@ -154,7 +154,7 @@ namespace Qoi.Csharp.Tests
                 128, 0, 0, 128,
             };
             var input = new byte[] {
-                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, size, 0, 0, 0, size, 3, 0,
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, size, 0, 0, 0, size, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
                 0b11111111,
                 128,
                 0,
