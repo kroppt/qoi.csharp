@@ -8,11 +8,15 @@ namespace Qoi.Csharp
     {
         private readonly BinaryReader _binReader;
         private readonly List<byte> _pixels;
+        private readonly Pixel[] _cache;
+
+        private const int CACHE_SIZE = 64;
 
         private Decoder(BinaryReader binReader)
         {
             _binReader = binReader;
             _pixels = new List<byte>();
+            _cache = new Pixel[64];
         }
 
         public static Image Decode(byte[] input)
@@ -72,24 +76,42 @@ namespace Qoi.Csharp
             }
         }
 
+        private int CalculateIndex(Pixel pixel)
+        {
+            return (pixel.R * 3 + pixel.G * 5 + pixel.B * 7 + pixel.A * 11) % CACHE_SIZE;
+        }
+
         private void ParseChunk()
         {
             var tag = _binReader.ReadByte();
+            if ((tag & 0b11_000000) == 0b00_000000)
+            {
+                var pixel = _cache[tag];
+                _pixels.Add(pixel.R);
+                _pixels.Add(pixel.G);
+                _pixels.Add(pixel.B);
+                _pixels.Add(pixel.A);
+                return;
+            }
+
             var r = _binReader.ReadByte();
-            _pixels.Add(r);
             var g = _binReader.ReadByte();
-            _pixels.Add(g);
             var b = _binReader.ReadByte();
-            _pixels.Add(b);
+            byte a = 255;
             if (tag == 0b11111110)
             {
-                _pixels.Add(255);
             }
             else
             {
-                var a = _binReader.ReadByte();
-                _pixels.Add(a);
+                a = _binReader.ReadByte();
             }
+            _pixels.Add(r);
+            _pixels.Add(g);
+            _pixels.Add(b);
+            _pixels.Add(a);
+            var newPixel = new Pixel { R = r, G = g, B = b, A = a };
+            var index = CalculateIndex(newPixel);
+            _cache[index] = newPixel;
         }
 
         private void ParseEndMarker()
