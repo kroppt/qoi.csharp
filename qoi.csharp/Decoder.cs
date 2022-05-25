@@ -7,16 +7,18 @@ namespace Qoi.Csharp
     public class Decoder
     {
         private readonly BinaryReader _binReader;
-        private readonly List<byte> _pixels;
+        private readonly List<byte> _pixelBytes;
         private readonly Pixel[] _cache;
+        private Pixel _prev;
 
         private const int CACHE_SIZE = 64;
 
         private Decoder(BinaryReader binReader)
         {
             _binReader = binReader;
-            _pixels = new List<byte>();
+            _pixelBytes = new List<byte>();
             _cache = new Pixel[64];
+            _prev = new Pixel { };
         }
 
         public static Image Decode(byte[] input)
@@ -87,10 +89,33 @@ namespace Qoi.Csharp
             if ((tag & 0b11_000000) == 0b00_000000)
             {
                 var pixel = _cache[tag];
-                _pixels.Add(pixel.R);
-                _pixels.Add(pixel.G);
-                _pixels.Add(pixel.B);
-                _pixels.Add(pixel.A);
+                _pixelBytes.Add(pixel.R);
+                _pixelBytes.Add(pixel.G);
+                _pixelBytes.Add(pixel.B);
+                _pixelBytes.Add(pixel.A);
+                _prev = pixel;
+                return;
+            }
+
+            if ((tag & 0b11_000000) == 0b01_000000)
+            {
+                var dr = (byte)((tag & 0b00_11_00_00) >> 4);
+                var dg = (byte)((tag & 0b00_00_11_00) >> 2);
+                var db = (byte)((tag & 0b00_00_00_11) >> 0);
+                byte bias = 2;
+                var pixel = new Pixel
+                {
+                    R = (byte)(_prev.R + dr - bias),
+                    G = (byte)(_prev.G + dg - bias),
+                    B = (byte)(_prev.B + db - bias),
+                    A = _prev.A,
+                };
+                _pixelBytes.Add(pixel.R);
+                _pixelBytes.Add(pixel.G);
+                _pixelBytes.Add(pixel.B);
+                _pixelBytes.Add(pixel.A);
+                _cache[CalculateIndex(pixel)] = pixel;
+                _prev = pixel;
                 return;
             }
 
@@ -105,13 +130,13 @@ namespace Qoi.Csharp
             {
                 a = _binReader.ReadByte();
             }
-            _pixels.Add(r);
-            _pixels.Add(g);
-            _pixels.Add(b);
-            _pixels.Add(a);
+            _pixelBytes.Add(r);
+            _pixelBytes.Add(g);
+            _pixelBytes.Add(b);
+            _pixelBytes.Add(a);
             var newPixel = new Pixel { R = r, G = g, B = b, A = a };
-            var index = CalculateIndex(newPixel);
-            _cache[index] = newPixel;
+            _cache[CalculateIndex(newPixel)] = newPixel;
+            _prev = newPixel;
         }
 
         private void ParseEndMarker()
@@ -152,7 +177,7 @@ namespace Qoi.Csharp
             ParseColorSpace();
             ParseChunks(width, height);
             ParseEndMarker();
-            var bytes = _pixels.ToArray();
+            var bytes = _pixelBytes.ToArray();
             return new Image(bytes, width, height, Channels.Rgba, ColorSpace.SRgb);
         }
 
