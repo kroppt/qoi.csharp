@@ -74,14 +74,22 @@ namespace Qoi.Csharp
 
         private void ParseChunk()
         {
-            _ = _binReader.ReadByte();
+            var tag = _binReader.ReadByte();
             var r = _binReader.ReadByte();
             _pixels.Add(r);
             var g = _binReader.ReadByte();
             _pixels.Add(g);
             var b = _binReader.ReadByte();
             _pixels.Add(b);
-            _pixels.Add(255);
+            if (tag == 0b11111110)
+            {
+                _pixels.Add(255);
+            }
+            else
+            {
+                var a = _binReader.ReadByte();
+                _pixels.Add(a);
+            }
         }
 
         private void ParseEndMarker()
