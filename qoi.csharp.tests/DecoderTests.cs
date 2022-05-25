@@ -223,5 +223,25 @@ namespace Qoi.Csharp.Tests
             var actual = image.Bytes;
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void ShouldParseDiffChunkWithWraparound()
+        {
+            byte width = 2;
+            byte height = 1;
+            var expected = new byte[] {
+                128, 255, 0, 255,
+                128, 0, 255, 255,
+            };
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, width, 0, 0, 0, height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
+                0b11111110, // RGB
+                128, // red
+                255, // green
+                0, // blue
+                0b01_000000 | 0b00_10_11_01, // diff
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+        }
     }
 }
