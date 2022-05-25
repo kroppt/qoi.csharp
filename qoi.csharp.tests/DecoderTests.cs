@@ -123,5 +123,27 @@ namespace Qoi.Csharp.Tests
                 Decoder.Decode(input);
             });
         }
+
+        [Fact]
+        public void ShouldParseRGBChunk()
+        {
+            byte size = 1;
+            var expected = new byte[]{
+                128, 0, 0, 255,
+            };
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, size, 0, 0, 0, size, 3, 0,
+                0b11111110,
+                128,
+                0,
+                0,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.Bytes;
+            Assert.Equal(expected, actual);
+        }
     }
 }

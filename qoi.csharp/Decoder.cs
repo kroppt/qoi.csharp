@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Qoi.Csharp
@@ -6,10 +7,12 @@ namespace Qoi.Csharp
     public class Decoder
     {
         private readonly BinaryReader _binReader;
+        private readonly List<byte> _pixels;
 
         private Decoder(BinaryReader binReader)
         {
             _binReader = binReader;
+            _pixels = new List<byte>();
         }
 
         public static Image Decode(byte[] input)
@@ -61,6 +64,26 @@ namespace Qoi.Csharp
             }
         }
 
+        private void ParseChunks(uint width, uint height)
+        {
+            for (var i = 0u; i < width * height; i++)
+            {
+                ParseChunk();
+            }
+        }
+
+        private void ParseChunk()
+        {
+            _ = _binReader.ReadByte();
+            var r = _binReader.ReadByte();
+            _pixels.Add(r);
+            var g = _binReader.ReadByte();
+            _pixels.Add(g);
+            var b = _binReader.ReadByte();
+            _pixels.Add(b);
+            _pixels.Add(255);
+        }
+
         private void ParseEndMarker()
         {
             var correctEndMarker = new byte[] {
@@ -97,8 +120,10 @@ namespace Qoi.Csharp
             var height = ReadUInt32BigEndian();
             ParseChannels();
             ParseColorSpace();
+            ParseChunks(width, height);
             ParseEndMarker();
-            return new Image(new byte[] { }, width, height, Channels.Rgba, ColorSpace.SRgb);
+            var bytes = _pixels.ToArray();
+            return new Image(bytes, width, height, Channels.Rgba, ColorSpace.SRgb);
         }
 
         public class InvalidHeaderException : Exception
