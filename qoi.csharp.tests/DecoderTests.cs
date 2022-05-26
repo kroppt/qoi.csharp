@@ -248,5 +248,31 @@ namespace Qoi.Csharp.Tests
             var actual = image.Bytes;
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void ShouldParseLumaChunk()
+        {
+            byte width = 2;
+            byte height = 1;
+            var expected = new byte[] {
+                128, 0, 0, 255,
+                151, 31, 38, 255,
+            };
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, width, 0, 0, 0, height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
+                Tag.RGB,
+                128, // red
+                0, // green
+                0, // blue
+                Tag.LUMA | 0b00_111111,
+                0b0000_1111,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.Bytes;
+            Assert.Equal(expected, actual);
+        }
     }
 }

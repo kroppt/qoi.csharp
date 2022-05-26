@@ -119,6 +119,30 @@ namespace Qoi.Csharp
                 return;
             }
 
+            if ((tag & Tag.MASK) == Tag.LUMA)
+            {
+                var dg = (byte)(tag & 0b00_111111) - 32;
+                var dxdg = _binReader.ReadByte();
+                var drdg = (dxdg & 0b1111_0000) >> 4;
+                var dr = (drdg - 8) + dg;
+                var dbdg = (dxdg & 0b0000_1111) >> 0;
+                var db = (dbdg - 8) + dg;
+                var pixel = new Pixel
+                {
+                    R = (byte)(_prev.R + dr),
+                    G = (byte)(_prev.G + dg),
+                    B = (byte)(_prev.B + db),
+                    A = _prev.A,
+                };
+                _pixelBytes.Add(pixel.R);
+                _pixelBytes.Add(pixel.G);
+                _pixelBytes.Add(pixel.B);
+                _pixelBytes.Add(pixel.A);
+                _cache[CalculateIndex(pixel)] = pixel;
+                _prev = pixel;
+                return;
+            }
+
             var r = _binReader.ReadByte();
             var g = _binReader.ReadByte();
             var b = _binReader.ReadByte();
