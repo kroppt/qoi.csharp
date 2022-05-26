@@ -133,7 +133,7 @@ namespace Qoi.Csharp.Tests
             };
             var input = new byte[] {
                 (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, size, 0, 0, 0, size, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
-                0b11111110,
+                Tag.RGB,
                 128,
                 0,
                 0,
@@ -155,7 +155,7 @@ namespace Qoi.Csharp.Tests
             };
             var input = new byte[] {
                 (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, size, 0, 0, 0, size, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
-                0b11111111,
+                Tag.RGBA,
                 128,
                 0,
                 0,
@@ -181,15 +181,15 @@ namespace Qoi.Csharp.Tests
             };
             var input = new byte[] {
                 (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, width, 0, 0, 0, height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
-                0b11111110, // RGB
+                Tag.RGB,
                 128, // red
                 0, // green
                 0, // blue
-                0b11111110, // RGB
+                Tag.RGB,
                 0, // red
                 127, // green
                 0, // blue
-                0b00_000000 | 53, // index
+                Tag.INDEX | 53,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
@@ -210,11 +210,11 @@ namespace Qoi.Csharp.Tests
             };
             var input = new byte[] {
                 (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, width, 0, 0, 0, height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
-                0b11111110, // RGB
+                Tag.RGB,
                 128, // red
                 0, // green
                 0, // blue
-                0b01_000000 | 0b00_11_10_10, // diff
+                Tag.DIFF | 0b00_11_10_10,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
 
@@ -235,11 +235,11 @@ namespace Qoi.Csharp.Tests
             };
             var input = new byte[] {
                 (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, width, 0, 0, 0, height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
-                0b11111110, // RGB
+                Tag.RGB,
                 128, // red
                 255, // green
                 0, // blue
-                0b01_000000 | 0b00_10_11_01, // diff
+                Tag.DIFF | 0b00_10_11_01,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
         }

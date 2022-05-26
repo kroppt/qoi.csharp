@@ -86,7 +86,7 @@ namespace Qoi.Csharp
         private void ParseChunk()
         {
             var tag = _binReader.ReadByte();
-            if ((tag & 0b11_000000) == 0b00_000000)
+            if ((tag & Tag.MASK) == Tag.INDEX)
             {
                 var pixel = _cache[tag];
                 _pixelBytes.Add(pixel.R);
@@ -97,7 +97,7 @@ namespace Qoi.Csharp
                 return;
             }
 
-            if ((tag & 0b11_000000) == 0b01_000000)
+            if ((tag & Tag.MASK) == Tag.DIFF)
             {
                 var dr = (byte)((tag & 0b00_11_00_00) >> 4);
                 var dg = (byte)((tag & 0b00_00_11_00) >> 2);
@@ -123,7 +123,7 @@ namespace Qoi.Csharp
             var g = _binReader.ReadByte();
             var b = _binReader.ReadByte();
             byte a = 255;
-            if (tag == 0b11111110)
+            if (tag == Tag.RGB)
             {
             }
             else
