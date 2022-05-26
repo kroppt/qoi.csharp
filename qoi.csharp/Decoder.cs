@@ -18,7 +18,7 @@ namespace Qoi.Csharp
             _binReader = binReader;
             _pixelBytes = new List<byte>();
             _cache = new Pixel[64];
-            _prev = new Pixel { };
+            _prev = new Pixel { R = 0, G = 0, B = 0, A = 255, };
         }
 
         public static Image Decode(byte[] input)

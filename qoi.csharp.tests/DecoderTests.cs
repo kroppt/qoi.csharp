@@ -332,5 +332,30 @@ namespace Qoi.Csharp.Tests
             var actual = image.Bytes;
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void ShouldParseIndexChunkAfterRun()
+        {
+            byte width = 2;
+            byte height = 2;
+            var expected = new byte[] {
+                0, 0, 0, 255,
+                0, 0, 0, 255,
+                127, 0, 0, 255,
+                0, 0, 0, 255,
+            };
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, width, 0, 0, 0, height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
+                Tag.RUN | 0b_000001, // run 2
+                Tag.RGB, 127, 0, 0,  // RGB
+                Tag.INDEX | 0b_110101, // index 53
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.Bytes;
+            Assert.Equal(expected, actual);
+        }
     }
 }
