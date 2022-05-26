@@ -72,7 +72,7 @@ namespace Qoi.Csharp
 
         private void ParseChunks(uint width, uint height)
         {
-            for (var i = 0u; i < width * height; i++)
+            while (_pixelBytes.Count < width * height * 4)
             {
                 ParseChunk();
             }
@@ -138,6 +138,23 @@ namespace Qoi.Csharp
                 _pixelBytes.Add(pixel.G);
                 _pixelBytes.Add(pixel.B);
                 _pixelBytes.Add(pixel.A);
+                _cache[CalculateIndex(pixel)] = pixel;
+                _prev = pixel;
+                return;
+            }
+
+            if (tag != Tag.RGB && tag != Tag.RGBA && (tag & Tag.MASK) == Tag.RUN)
+            {
+                var run = (byte)(tag & ~Tag.MASK);
+                var runLength = run + 1;
+                var pixel = _prev;
+                for (var i = 0; i < runLength; i++)
+                {
+                    _pixelBytes.Add(pixel.R);
+                    _pixelBytes.Add(pixel.G);
+                    _pixelBytes.Add(pixel.B);
+                    _pixelBytes.Add(pixel.A);
+                }
                 _cache[CalculateIndex(pixel)] = pixel;
                 _prev = pixel;
                 return;

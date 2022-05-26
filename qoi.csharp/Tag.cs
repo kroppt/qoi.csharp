@@ -8,5 +8,6 @@ namespace Qoi.Csharp
         public const byte INDEX = 0b00_000000;
         public const byte DIFF = 0b01_000000;
         public const byte LUMA = 0b10_000000;
+        public const byte RUN = 0b11_000000;
     }
 }
