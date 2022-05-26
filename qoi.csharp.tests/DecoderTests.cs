@@ -242,6 +242,11 @@ namespace Qoi.Csharp.Tests
                 Tag.DIFF | 0b00_10_11_01,
                 0, 0, 0, 0, 0, 0, 0, 1,
             };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.Bytes;
+            Assert.Equal(expected, actual);
         }
     }
 }
