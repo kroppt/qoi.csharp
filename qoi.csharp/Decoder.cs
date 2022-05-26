@@ -9,6 +9,7 @@ namespace Qoi.Csharp
         private readonly BinaryReader _binReader;
         private readonly List<byte> _pixelBytes;
         private readonly Pixel[] _cache;
+        private Channels? _channels;
         private Pixel _prev;
 
         private const int CACHE_SIZE = 64;
@@ -18,6 +19,7 @@ namespace Qoi.Csharp
             _binReader = binReader;
             _pixelBytes = new List<byte>();
             _cache = new Pixel[64];
+            _channels = null;
             _prev = new Pixel { R = 0, G = 0, B = 0, A = 255, };
         }
 
@@ -54,10 +56,10 @@ namespace Qoi.Csharp
 
         private void ParseChannels()
         {
-            var channels = (Channels)_binReader.ReadByte();
-            if (!Enum.IsDefined(typeof(Channels), channels))
+            _channels = (Channels)_binReader.ReadByte();
+            if (!Enum.IsDefined(typeof(Channels), _channels))
             {
-                throw new InvalidHeaderException($"Value {channels} for Channels is not valid.");
+                throw new InvalidHeaderException($"Value {_channels} for Channels is not valid.");
             }
         }
 
@@ -72,7 +74,12 @@ namespace Qoi.Csharp
 
         private void ParseChunks(uint width, uint height)
         {
-            while (_pixelBytes.Count < width * height * 4)
+            var pixelSize = 3;
+            if (_channels == Channels.Rgba)
+            {
+                pixelSize = 4;
+            }
+            while (_pixelBytes.Count < width * height * pixelSize)
             {
                 ParseChunk();
             }
@@ -83,16 +90,30 @@ namespace Qoi.Csharp
             return (pixel.R * 3 + pixel.G * 5 + pixel.B * 7 + pixel.A * 11) % CACHE_SIZE;
         }
 
+        private void WritePixel(Pixel pixel)
+        {
+            if (_channels == Channels.Rgb)
+            {
+                _pixelBytes.Add(pixel.R);
+                _pixelBytes.Add(pixel.G);
+                _pixelBytes.Add(pixel.B);
+            }
+            else
+            {
+                _pixelBytes.Add(pixel.R);
+                _pixelBytes.Add(pixel.G);
+                _pixelBytes.Add(pixel.B);
+                _pixelBytes.Add(pixel.A);
+            }
+        }
+
         private void ParseChunk()
         {
             var tag = _binReader.ReadByte();
             if ((tag & Tag.MASK) == Tag.INDEX)
             {
                 var pixel = _cache[tag];
-                _pixelBytes.Add(pixel.R);
-                _pixelBytes.Add(pixel.G);
-                _pixelBytes.Add(pixel.B);
-                _pixelBytes.Add(pixel.A);
+                WritePixel(pixel);
                 _prev = pixel;
                 return;
             }
@@ -110,10 +131,7 @@ namespace Qoi.Csharp
                     B = (byte)(_prev.B + db - bias),
                     A = _prev.A,
                 };
-                _pixelBytes.Add(pixel.R);
-                _pixelBytes.Add(pixel.G);
-                _pixelBytes.Add(pixel.B);
-                _pixelBytes.Add(pixel.A);
+                WritePixel(pixel);
                 _cache[CalculateIndex(pixel)] = pixel;
                 _prev = pixel;
                 return;
@@ -134,10 +152,7 @@ namespace Qoi.Csharp
                     B = (byte)(_prev.B + db),
                     A = _prev.A,
                 };
-                _pixelBytes.Add(pixel.R);
-                _pixelBytes.Add(pixel.G);
-                _pixelBytes.Add(pixel.B);
-                _pixelBytes.Add(pixel.A);
+                WritePixel(pixel);
                 _cache[CalculateIndex(pixel)] = pixel;
                 _prev = pixel;
                 return;
@@ -150,10 +165,7 @@ namespace Qoi.Csharp
                 var pixel = _prev;
                 for (var i = 0; i < runLength; i++)
                 {
-                    _pixelBytes.Add(pixel.R);
-                    _pixelBytes.Add(pixel.G);
-                    _pixelBytes.Add(pixel.B);
-                    _pixelBytes.Add(pixel.A);
+                    WritePixel(pixel);
                 }
                 _cache[CalculateIndex(pixel)] = pixel;
                 _prev = pixel;
@@ -171,11 +183,8 @@ namespace Qoi.Csharp
             {
                 a = _binReader.ReadByte();
             }
-            _pixelBytes.Add(r);
-            _pixelBytes.Add(g);
-            _pixelBytes.Add(b);
-            _pixelBytes.Add(a);
             var newPixel = new Pixel { R = r, G = g, B = b, A = a };
+            WritePixel(newPixel);
             _cache[CalculateIndex(newPixel)] = newPixel;
             _prev = newPixel;
         }
