@@ -159,6 +159,40 @@ namespace Qoi.Csharp.Tests
         }
 
         [Fact]
+        public void ShouldParseColorSpaceSRgb()
+        {
+            var expected = ColorSpace.SRgb;
+            var width = 0;
+            var height = 0;
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.ColorSpace;
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ShouldParseColorSpaceLinear()
+        {
+            var expected = ColorSpace.Linear;
+            var width = 0;
+            var height = 0;
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgb, (byte)ColorSpace.Linear,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.ColorSpace;
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void ShouldParseRGBChunk()
         {
             byte size = 1;

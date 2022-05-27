@@ -10,6 +10,7 @@ namespace Qoi.Csharp
         private readonly List<byte> _pixelBytes;
         private readonly Pixel[] _cache;
         private Channels? _channels;
+        private ColorSpace? _colorSpace;
         private Pixel _prev;
 
         private const int CACHE_SIZE = 64;
@@ -20,6 +21,7 @@ namespace Qoi.Csharp
             _pixelBytes = new List<byte>();
             _cache = new Pixel[64];
             _channels = null;
+            _colorSpace = null;
             _prev = new Pixel { R = 0, G = 0, B = 0, A = 255, };
         }
 
@@ -65,10 +67,10 @@ namespace Qoi.Csharp
 
         private void ParseColorSpace()
         {
-            var colorSpace = (ColorSpace)_binReader.ReadByte();
-            if (!Enum.IsDefined(typeof(ColorSpace), colorSpace))
+            _colorSpace = (ColorSpace)_binReader.ReadByte();
+            if (!Enum.IsDefined(typeof(ColorSpace), _colorSpace))
             {
-                throw new InvalidHeaderException($"Value {colorSpace} for ColorSpace is not valid.");
+                throw new InvalidHeaderException($"Value {_colorSpace} for ColorSpace is not valid.");
             }
         }
 
@@ -228,7 +230,7 @@ namespace Qoi.Csharp
             ParseChunks(width, height);
             ParseEndMarker();
             var bytes = _pixelBytes.ToArray();
-            return new Image(bytes, width, height, _channels.Value, ColorSpace.SRgb);
+            return new Image(bytes, width, height, _channels.Value, _colorSpace.Value);
         }
 
         public class InvalidHeaderException : Exception
