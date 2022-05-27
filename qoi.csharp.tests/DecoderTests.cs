@@ -1,3 +1,8 @@
+using System.IO;
+
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
 using Xunit;
 
 namespace Qoi.Csharp.Tests
@@ -464,6 +469,30 @@ namespace Qoi.Csharp.Tests
 
             var actual = image.Bytes;
             Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ShouldDecode10x10Correctly()
+        {
+            byte[] expectedBytes;
+            uint expectedWidth;
+            uint expectedHeight;
+            Channels expectedChannels = Channels.Rgb;
+            using (Image<Rgb24> png = SixLabors.ImageSharp.Image.Load<Rgb24>("testdata/10x10.png"))
+            {
+                expectedWidth = (uint)png.Width;
+                expectedHeight = (uint)png.Height;
+                expectedBytes = new byte[expectedWidth * expectedHeight * 3];
+                png.CopyPixelDataTo(expectedBytes);
+            }
+            var input = File.ReadAllBytes("testdata/10x10.qoi");
+
+            var actual = Decoder.Decode(input);
+
+            Assert.Equal(expectedBytes, actual.Bytes);
+            Assert.Equal(expectedWidth, actual.Width);
+            Assert.Equal(expectedHeight, actual.Height);
+            Assert.Equal(expectedChannels, actual.Channels);
         }
     }
 }
