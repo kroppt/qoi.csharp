@@ -167,6 +167,26 @@ namespace Qoi.Csharp.Tests
         }
 
         [Fact]
+        public void ShouldHaveBytesLengthBasedOnRGBAChannels()
+        {
+            byte width = 1;
+            byte height = 1;
+            var expectedBytesLength = width * height * 4;
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, width, 0, 0, 0, height, (byte)Channels.Rgba, (byte)ColorSpace.SRgb,
+                Tag.RGB,
+                128,
+                0,
+                0,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var actual = Decoder.Decode(input);
+
+            Assert.Equal(expectedBytesLength, actual.Bytes.Length);
+        }
+
+        [Fact]
         public void ShouldParseRGBAChunk()
         {
             byte size = 1;
