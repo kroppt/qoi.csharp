@@ -228,7 +228,7 @@ namespace Qoi.Csharp
             ParseChunks(width, height);
             ParseEndMarker();
             var bytes = _pixelBytes.ToArray();
-            return new Image(bytes, width, height, Channels.Rgba, ColorSpace.SRgb);
+            return new Image(bytes, width, height, _channels.Value, ColorSpace.SRgb);
         }
 
         public class InvalidHeaderException : Exception

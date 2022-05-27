@@ -125,6 +125,40 @@ namespace Qoi.Csharp.Tests
         }
 
         [Fact]
+        public void ShouldParseChannelsRGBA()
+        {
+            var expected = Channels.Rgba;
+            var width = 0;
+            var height = 0;
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgba, (byte)ColorSpace.SRgb,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.Channels;
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ShouldParseChannelsRGB()
+        {
+            var expected = Channels.Rgb;
+            var width = 0;
+            var height = 0;
+            var input = new byte[] {
+                (byte)'q', (byte)'o', (byte)'i', (byte)'f', 0, 0, 0, (byte)width, 0, 0, 0, (byte)height, (byte)Channels.Rgb, (byte)ColorSpace.SRgb,
+                0, 0, 0, 0, 0, 0, 0, 1,
+            };
+
+            var image = Decoder.Decode(input);
+
+            var actual = image.Channels;
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void ShouldParseRGBChunk()
         {
             byte size = 1;
