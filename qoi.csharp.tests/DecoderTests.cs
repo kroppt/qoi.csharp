@@ -494,5 +494,29 @@ namespace Qoi.Csharp.Tests
             Assert.Equal(expectedHeight, actual.Height);
             Assert.Equal(expectedChannels, actual.Channels);
         }
+
+        [Fact]
+        public void ShouldDecodeSampleCorrectly()
+        {
+            byte[] expectedBytes;
+            uint expectedWidth;
+            uint expectedHeight;
+            Channels expectedChannels = Channels.Rgba;
+            using (Image<Rgba32> png = SixLabors.ImageSharp.Image.Load<Rgba32>("testdata/sample.png"))
+            {
+                expectedWidth = (uint)png.Width;
+                expectedHeight = (uint)png.Height;
+                expectedBytes = new byte[expectedWidth * expectedHeight * 4];
+                png.CopyPixelDataTo(expectedBytes);
+            }
+            var input = File.ReadAllBytes("testdata/sample.qoi");
+
+            var actual = Decoder.Decode(input);
+
+            Assert.Equal(expectedBytes, actual.Bytes);
+            Assert.Equal(expectedWidth, actual.Width);
+            Assert.Equal(expectedHeight, actual.Height);
+            Assert.Equal(expectedChannels, actual.Channels);
+        }
     }
 }
