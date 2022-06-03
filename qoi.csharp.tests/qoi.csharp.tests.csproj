@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="testdata\*.*">
+      <None Include="..\testdata\**" LinkBase="testdata">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

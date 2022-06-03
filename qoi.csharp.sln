@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qoi.csharp", "qoi.csharp\qo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qoi.csharp.tests", "qoi.csharp.tests\qoi.csharp.tests.csproj", "{4EFDA031-9E02-433F-87BB-E7F4BC4A2338}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qoi.csharp.benchmarks", "qoi.csharp.benchmarks\qoi.csharp.benchmarks.csproj", "{FA2C8FDA-C07D-4B9D-A284-1E681347F414}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,5 +46,17 @@ Global
 		{4EFDA031-9E02-433F-87BB-E7F4BC4A2338}.Release|x64.Build.0 = Release|Any CPU
 		{4EFDA031-9E02-433F-87BB-E7F4BC4A2338}.Release|x86.ActiveCfg = Release|Any CPU
 		{4EFDA031-9E02-433F-87BB-E7F4BC4A2338}.Release|x86.Build.0 = Release|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Debug|x64.Build.0 = Debug|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Debug|x86.Build.0 = Debug|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Release|x64.ActiveCfg = Release|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Release|x64.Build.0 = Release|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Release|x86.ActiveCfg = Release|Any CPU
+		{FA2C8FDA-C07D-4B9D-A284-1E681347F414}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
