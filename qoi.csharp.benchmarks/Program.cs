@@ -6,7 +6,8 @@ namespace qoi.csharp.benchmarks
     {
         public static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<DecodeBenchmarks>();
+            _ = BenchmarkRunner.Run<DecodeBenchmarks>();
+            _ = BenchmarkRunner.Run<EncodeBenchmarks>();
         }
     }
 }

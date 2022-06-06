@@ -32,7 +32,7 @@ namespace qoi.csharp.benchmarks
                 _alphaWidth = png.Width;
                 _alphaHeight = png.Height;
                 _alphaBytes = new byte[png.Width * png.Height * 4];
-                png.CopyPixelDataTo(_nonAlphaBytes);
+                png.CopyPixelDataTo(_alphaBytes);
             }
         }
 
@@ -45,7 +45,7 @@ namespace qoi.csharp.benchmarks
         [Benchmark]
         public byte[] AlphaImage()
         {
-            return Encoder.Encode(_alphaBytes, _alphaWidth, _alphaHeight, Channels.Rgb, ColorSpace.SRgb);
+            return Encoder.Encode(_alphaBytes, _alphaWidth, _alphaHeight, Channels.Rgba, ColorSpace.SRgb);
         }
     }
 }
