@@ -4,10 +4,7 @@ namespace qoi.csharp.benchmarks
 {
     public class Program
     {
-        public static void Main(string[] args)
-        {
-            _ = BenchmarkRunner.Run<DecodeBenchmarks>();
-            _ = BenchmarkRunner.Run<EncodeBenchmarks>();
-        }
+        public static void Main(string[] args) =>
+            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
     }
 }
