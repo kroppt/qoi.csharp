@@ -2,9 +2,9 @@ using System;
 
 namespace Qoi.Csharp
 {
-    struct Pixel : IEquatable<Pixel>
+    internal struct Pixel : IEquatable<Pixel>
     {
-        internal Pixel(byte r, byte g, byte b, byte a)
+        public Pixel(byte r, byte g, byte b, byte a)
         {
             R = r;
             G = g;

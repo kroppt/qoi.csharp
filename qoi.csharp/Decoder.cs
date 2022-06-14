@@ -4,6 +4,9 @@ using System.IO;
 
 namespace Qoi.Csharp
 {
+    /// <summary>
+    /// Decoder for QOI images.
+    /// </summary>
     public class Decoder
     {
         private readonly BinaryReader _binReader;
@@ -25,6 +28,11 @@ namespace Qoi.Csharp
             _prev = new Pixel { R = 0, G = 0, B = 0, A = 255, };
         }
 
+        /// <summary>
+        /// Decode QOI bytes into a raw image.
+        /// </summary>
+        /// <param name="input">The raw bytes of a QOI image.</param>
+        /// <returns>An image containing color and meta data.</returns>
         public static Image Decode(byte[] input)
         {
             using (var memStream = new MemoryStream(input))
@@ -233,16 +241,37 @@ namespace Qoi.Csharp
             return new Image(bytes, width, height, _channels.Value, _colorSpace.Value);
         }
 
+        /// <summary>
+        /// Represents errors that occurred parsing a QOI header.
+        /// </summary>
         public class InvalidHeaderException : Exception
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="InvalidHeaderException"/> class.
+            /// </summary>
             public InvalidHeaderException() : base()
             {
             }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="InvalidHeaderException"/> class with a specified error message.
+            /// </summary>
+            /// <param name="message">The message that describes the error.</param>
             public InvalidHeaderException(string message) : base(message)
             {
             }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="InvalidHeaderException"/> class with a specified error message
+            /// and a reference to the inner exception that is the cause of this exception.
+            /// </summary>
+            /// <param name="message">
+            /// The error message that explains the reason for the exception.
+            /// </param>
+            /// <param name="innerException">
+            /// The exception that is the cause of the current exception,
+            /// or a null reference (Nothing in Visual Basic) if no inner exception is specified.
+            /// </param>
             public InvalidHeaderException(string message, Exception innerException) : base(message, innerException)
             {
             }

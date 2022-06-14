@@ -3,6 +3,9 @@ using System.IO;
 
 namespace Qoi.Csharp
 {
+    /// <summary>
+    /// Encoder for QOI images.
+    /// </summary>
     public class Encoder
     {
         private readonly BinaryWriter _binWriter;
@@ -31,6 +34,15 @@ namespace Qoi.Csharp
             _runLength = 0;
         }
 
+        /// <summary>
+        /// Encode raw color bytes into a QOI image.
+        /// </summary>
+        /// <param name="input">The raw color bytes.</param>
+        /// <param name="width">The width of the image.</param>
+        /// <param name="height">The height of the image.</param>
+        /// <param name="channels">The number of channels of the image.</param>
+        /// <param name="colorSpace">The color space of the image.</param>
+        /// <returns>The bytes of the encoded QOI image.</returns>
         public static byte[] Encode(byte[] input, int width, int height, Channels channels, ColorSpace colorSpace)
         {
             using (var memStream = new MemoryStream())
