@@ -10,7 +10,7 @@ namespace Qoi.Csharp
     public class Decoder
     {
         private readonly BinaryReader _binReader;
-        private readonly List<byte> _pixelBytes;
+        private List<byte> _pixelBytes;
         private readonly Pixel[] _cache;
         private Channels? _channels;
         private ColorSpace? _colorSpace;
@@ -21,7 +21,7 @@ namespace Qoi.Csharp
         private Decoder(BinaryReader binReader)
         {
             _binReader = binReader;
-            _pixelBytes = new List<byte>();
+            _pixelBytes = null;
             _cache = new Pixel[64];
             _channels = null;
             _colorSpace = null;
@@ -89,7 +89,8 @@ namespace Qoi.Csharp
             {
                 pixelSize = 4;
             }
-            while (_pixelBytes.Count < width * height * pixelSize)
+            _pixelBytes = new List<byte>((int)(width * height * pixelSize));
+            while (_pixelBytes.Count < _pixelBytes.Capacity)
             {
                 ParseChunk();
             }
